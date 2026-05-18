@@ -3,10 +3,6 @@
  * @brief       Các hàm kiểm tra tính hợp lệ của LogRecord theo yêu cầu nghiệp vụ.
  *
  * Cung cấp các hàm validate cơ bản cho dữ liệu log an ninh hệ thống.
- *
- * @author      QCodesDS
- * @date        2026-05-13
- * @version     1.0
  */
 
 #ifndef VALIDATOR_H

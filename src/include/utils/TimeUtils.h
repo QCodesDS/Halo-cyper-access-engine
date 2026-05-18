@@ -1,10 +1,6 @@
 /**
  * @file        TimeUtils.h
  * @brief       Các hàm tiện ích xử lý thời gian Unix epoch.
- *
- * @author      QCodesDS
- * @date        2026-05-12
- * @version     1.0
  */
 
 #ifndef TIME_UTILS_H

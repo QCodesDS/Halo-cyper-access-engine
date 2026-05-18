@@ -5,10 +5,6 @@
  * Cấu trúc này quản lý mảng động các bản ghi log, tự động mở rộng
  * khi cần (doubling capacity). DataStore sở hữu và chịu trách nhiệm
  * giải phóng bộ nhớ của các LogRecord bên trong.
- *
- * @author      QCodesDS
- * @date        2026-05-13
- * @version     1.0
  */
 
 #ifndef DATASTORE_H

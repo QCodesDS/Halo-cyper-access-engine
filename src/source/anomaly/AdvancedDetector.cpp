@@ -1,8 +1,15 @@
+/**
+ * @file        AdvancedDetector.cpp
+ * @brief       Implementation của các thuật toán phát hiện hành vi bất thường nâng cao.
+ */
+
 #include "anomaly/AdvancedDetector.h"
 #include "anomaly/AnomalyConfig.h"
 
-// A10: Brute force detection
-// >= 5 FAILED_LOGIN liên tiếp, cuối cùng là LOGIN thành công
+// ================================================================================
+//  Public functions
+// ================================================================================
+
 void detectBruteForce(AnomalyList &results, const HashIndex &hashIdx)
 {
     for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++)
@@ -42,8 +49,6 @@ void detectBruteForce(AnomalyList &results, const HashIndex &hashIdx)
     }
 }
 
-// A11: Dormant activation
-// User không có activity > 7 ngày, đột ngột hoạt động mạnh (> 20 event trong 1 giờ)
 void detectDormantActivation(AnomalyList &results, const HashIndex &hashIdx)
 {
     for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++)

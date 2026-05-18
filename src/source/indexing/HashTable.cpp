@@ -1,7 +1,15 @@
+/**
+ * @file        HashTable.cpp
+ * @brief       Implementation các thuật toán băm cuốn, xử lý va chạm và quản lý bộ nhớ của bảng băm.
+ */
+
 #include "indexing/HashTable.h"
 #include <cstring>
 
-// Polynomial rolling hash function using prime 31
+// ================================================================================
+//  Public functions
+// ================================================================================
+
 int hashFunction(const std::string &key, int tableSize)
 {
     if (tableSize <= 0)
@@ -19,7 +27,6 @@ int hashFunction(const std::string &key, int tableSize)
     return (int)(hash % tableSize);
 }
 
-// Initialize hash table
 void initHashTable(HashTable &ht, int tableSize)
 {
     ht.tableSize = tableSize;
@@ -32,7 +39,6 @@ void initHashTable(HashTable &ht, int tableSize)
     }
 }
 
-// Insert LogRecord into hash table
 void insertHash(HashTable &ht, const std::string &key, LogRecord *record)
 {
     if (record == nullptr)
@@ -42,15 +48,15 @@ void insertHash(HashTable &ht, const std::string &key, LogRecord *record)
     HashNode *node = ht.buckets[bucket];
     HashNode *prevNode = nullptr;
 
-    // Find existing node with this key or end of chain
+    // Tìm kiếm nút đã tồn tại khóa trùng khớp trong chuỗi va chạm (chain)
     while (node != nullptr)
     {
         if (node->key == key)
         {
-            // Found existing key - append record to its values array
+            // Trùng khóa: Tiến hành bổ sung con trỏ log vào mảng động giá trị (values)
             if (node->count == node->capacity)
             {
-                // Resize values array
+                // Tái cấp phát tăng gấp đôi kích thước mảng động khi đầy
                 int newCapacity = node->capacity * 2;
                 LogRecord **newValues = new LogRecord *[newCapacity];
 
@@ -73,7 +79,7 @@ void insertHash(HashTable &ht, const std::string &key, LogRecord *record)
         node = node->next;
     }
 
-    // Key not found - create new node
+    // Không tìm thấy khóa sẵn có: Khởi tạo nút mới và chèn vào danh sách liên kết
     HashNode *newNode = new HashNode();
     newNode->key = key;
     newNode->capacity = 10;
@@ -84,19 +90,18 @@ void insertHash(HashTable &ht, const std::string &key, LogRecord *record)
 
     if (prevNode == nullptr)
     {
-        // Empty bucket
+        // Trường hợp bucket đang trống (Nút đầu tiên của chuỗi)
         ht.buckets[bucket] = newNode;
     }
     else
     {
-        // Append to end of chain
+        // Chèn nối đuôi vào cuối chuỗi liên kết va chạm
         prevNode->next = newNode;
     }
 
     ht.totalKeys++;
 }
 
-// Look up records by key
 LogRecord **lookupHash(const HashTable &ht, const std::string &key, int &outCount)
 {
     outCount = 0;
@@ -104,7 +109,7 @@ LogRecord **lookupHash(const HashTable &ht, const std::string &key, int &outCoun
     int bucket = hashFunction(key, ht.tableSize);
     HashNode *node = ht.buckets[bucket];
 
-    // Traverse chain to find key
+    // Duyệt dọc theo chuỗi liên kết va chạm để đối chiếu khóa tìm kiếm
     while (node != nullptr)
     {
         if (node->key == key)
@@ -116,11 +121,10 @@ LogRecord **lookupHash(const HashTable &ht, const std::string &key, int &outCoun
         node = node->next;
     }
 
-    // Key not found
+    // Không tìm thấy khóa phù hợp trong toàn bộ chuỗi va chạm
     return nullptr;
 }
 
-// Clear hash table and free all memory
 void clearHashTable(HashTable &ht)
 {
     for (int i = 0; i < ht.tableSize; i++)

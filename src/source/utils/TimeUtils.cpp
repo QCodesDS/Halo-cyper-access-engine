@@ -1,8 +1,6 @@
 /**
  * @file        TimeUtils.cpp
  * @brief       Implementation của các hàm tiện ích thời gian.
- * @author      QCodesDS
- * @date        2026-05-12
  */
 
 #include "utils/TimeUtils.h"

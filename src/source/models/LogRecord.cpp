@@ -1,8 +1,6 @@
 /**
  * @file        LogRecord.cpp
  * @brief       Implementation của cấu trúc LogRecord.
- * @author      QCodesDS
- * @date        2026-05-12
  */
 
 #include "models/LogRecord.h"

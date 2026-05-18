@@ -1,8 +1,6 @@
 /**
  * @file        CsvLoader.cpp
  * @brief       Implementation của module tải dữ liệu CSV.
- * @author      QCodesDS
- * @date        2026-05-13
  */
 
 #include "storage/CsvLoader.h"

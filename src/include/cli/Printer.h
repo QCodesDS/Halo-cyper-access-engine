@@ -4,10 +4,6 @@
  *
  * Cung cấp các hàm print có prefix rõ ràng (INFO, ERROR, WARNING)
  * để dễ theo dõi output của chương trình.
- *
- * @author      QCodesDS
- * @date        2026-05-13
- * @version     1.0
  */
 
 #ifndef PRINTER_H

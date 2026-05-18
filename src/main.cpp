@@ -90,6 +90,7 @@ int main() {
       } else {
         auto startDetect = std::chrono::high_resolution_clock::now();
         AnomalyList results;
+        initAnomalyList(results);
         runAnomalyDetection(results, store, indexMgr.hashIdx);
         auto endDetect = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = endDetect - startDetect;

@@ -1,4 +1,13 @@
+/**
+ * @file        AnomalyRecord.cpp
+ * @brief       Implementation các hàm quản lý bộ nhớ và danh sách mảng động AnomalyList.
+ */
+
 #include "anomaly/AnomalyRecord.h"
+
+// ================================================================================
+//  Public functions
+// ================================================================================
 
 void initAnomalyList(AnomalyList &list, int capacity)
 {

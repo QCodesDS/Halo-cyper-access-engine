@@ -4,10 +4,6 @@
  *
  * Enum này được sử dụng xuyên suốt hệ thống để ghi nhận và phân loại
  * các hoạt động liên quan đến bảo mật và truy cập tài nguyên.
- *
- * @author      QCodesDS
- * @date        2026-05-12
- * @version     1.0
  */
 
 #ifndef EVENT_TYPE_H

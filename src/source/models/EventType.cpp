@@ -1,8 +1,6 @@
 /**
  * @file        EventType.cpp
  * @brief       Implementation của các hàm chuyển đổi cho EventType.
- * @author      QCodesDS
- * @date        2026-05-12
  */
 
 #include "models/EventType.h"

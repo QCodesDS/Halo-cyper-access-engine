@@ -1,8 +1,6 @@
 /**
  * @file        StringUtils.cpp
  * @brief       Implementation của các hàm tiện ích chuỗi.
- * @author      QCodesDS
- * @date        2026-05-12
  */
 
 #include "utils/StringUtils.h"

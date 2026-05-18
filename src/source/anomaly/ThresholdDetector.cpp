@@ -1,9 +1,25 @@
+/**
+ * @file        ThresholdDetector.cpp
+ * @brief       Implementation các hàm kiểm tra và phát hiện bất thường theo ngưỡng cố định.
+ */
+
 #include "anomaly/ThresholdDetector.h"
 #include "anomaly/AnomalyConfig.h"
 #include "utils/TimeUtils.h"
 #include "utils/StringUtils.h"
 
-// Helper to check if a string exists in array
+// ================================================================================
+//  Helper functions
+// ================================================================================
+
+/**
+ * @brief  Kiểm tra xem một chuỗi ký tự đã tồn tại trong mảng tĩnh hay chưa.
+ * @note   Hàm nội bộ bổ trợ cho việc đếm các giá trị định danh duy nhất (Unique ID).
+ * @param  arr Mảng các chuỗi cần kiểm tra
+ * @param  count Số lượng phần tử hiện tại trong mảng
+ * @param  val Giá trị chuỗi cần tìm kiếm
+ * @return true nếu tìm thấy phần tử trùng khớp, false nếu ngược lại
+ */
 static bool existsInArray(const std::string *arr, int count, const std::string &val)
 {
     for (int i = 0; i < count; i++)
@@ -14,7 +30,10 @@ static bool existsInArray(const std::string *arr, int count, const std::string &
     return false;
 }
 
-// A01: Multi-device login
+// ================================================================================
+//  Public functions
+// ================================================================================
+
 void detectMultiDeviceLogin(AnomalyList &results, const HashIndex &hashIdx)
 {
     for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++)
@@ -26,7 +45,7 @@ void detectMultiDeviceLogin(AnomalyList &results, const HashIndex &hashIdx)
             {
                 LogRecord *currentEvent = node->values[i];
                 
-                // Keep track of unique devices in the 60-min window ending at currentEvent
+                // Mảng lưu trữ danh sách thiết bị duy nhất trong cửa sổ trượt 60 phút
                 std::string uniqueDevices[AnomalyConfig::MAX_DEVICES_PER_HOUR + 1];
                 int uniqueCount = 0;
 
@@ -62,7 +81,6 @@ void detectMultiDeviceLogin(AnomalyList &results, const HashIndex &hashIdx)
     }
 }
 
-// A02: Consecutive failed login
 void detectConsecutiveFailedLogin(AnomalyList &results, const HashIndex &hashIdx)
 {
     for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++)
@@ -85,12 +103,11 @@ void detectConsecutiveFailedLogin(AnomalyList &results, const HashIndex &hashIdx
                         rec->timestamp = event->timestamp;
                         rec->detail = "Consecutive failed logins > " + std::to_string(AnomalyConfig::MAX_FAILED_LOGIN_STREAK);
                         pushAnomaly(results, rec);
-                        // Prevent flooding by resetting or continuing, wait, dedup will handle it later.
                     }
                 }
                 else
                 {
-                    // Any other event breaks the failed login streak
+                    // Bất kỳ sự kiện nào khác (ví dụ: LOGIN thành công) đều làm ngắt chuỗi đăng nhập sai
                     failedStreak = 0;
                 }
             }
@@ -99,7 +116,6 @@ void detectConsecutiveFailedLogin(AnomalyList &results, const HashIndex &hashIdx
     }
 }
 
-// A03: Resource flood per device
 void detectResourceFlood(AnomalyList &results, const HashIndex &hashIdx)
 {
     for (int bucket = 0; bucket < hashIdx.byDevice.tableSize; bucket++)
@@ -111,6 +127,7 @@ void detectResourceFlood(AnomalyList &results, const HashIndex &hashIdx)
             {
                 LogRecord *currentEvent = node->values[i];
                 
+                // Mảng tĩnh tối ưu bộ nhớ thu thập danh sách tài nguyên trong 30 phút
                 std::string uniqueResources[AnomalyConfig::MAX_RESOURCES_PER_30MIN + 1];
                 int uniqueCount = 0;
 
@@ -135,7 +152,7 @@ void detectResourceFlood(AnomalyList &results, const HashIndex &hashIdx)
                 {
                     AnomalyRecord *rec = new AnomalyRecord();
                     rec->type = AnomalyType::RESOURCE_FLOOD;
-                    rec->userId = currentEvent->user_id; // Tag the user who caused the flood
+                    rec->userId = currentEvent->user_id; // Đánh dấu ID người dùng điều khiển thiết bị gây flood
                     rec->timestamp = currentEvent->timestamp;
                     rec->detail = "Device " + node->key + " accessed > " + std::to_string(AnomalyConfig::MAX_RESOURCES_PER_30MIN) + " unique resources in 30 min";
                     pushAnomaly(results, rec);
@@ -146,7 +163,6 @@ void detectResourceFlood(AnomalyList &results, const HashIndex &hashIdx)
     }
 }
 
-// A04: Off-hours access
 void detectOffHoursAccess(AnomalyList &results, const DataStore &store)
 {
     for (int i = 0; i < store.count; i++)

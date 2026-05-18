@@ -1,8 +1,6 @@
 /**
  * @file        Validator.cpp
  * @brief       Implementation của các hàm kiểm tra tính hợp lệ dữ liệu.
- * @author      QCodesDS
- * @date        2026-05-13
  */
 
 #include "storage/Validator.h"

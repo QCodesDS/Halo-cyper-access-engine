@@ -4,10 +4,6 @@
  *
  * Enum này được sử dụng để ghi nhận vị trí địa lý phát sinh sự kiện
  * trong hệ thống log an ninh.
- *
- * @author      QCodesDS
- * @date        2026-05-12
- * @version     1.0
  */
 
 #ifndef LOCATION_H

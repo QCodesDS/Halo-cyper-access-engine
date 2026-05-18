@@ -1,8 +1,6 @@
 /**
  * @file        DataStore.cpp
  * @brief       Implementation của DataStore - container lưu trữ LogRecord.
- * @author      QCodesDS
- * @date        2026-05-13
  */
 
 #include "storage/DataStore.h"

@@ -1,17 +1,25 @@
+/**
+ * @file        SortedIndex.cpp
+ * @brief       Implementation giải thuật Merge Sort ổn định và cơ chế tìm kiếm nhị phân trên SortedIndex.
+ */
+
 #include "indexing/SortedIndex.h"
 #include <cstring>
 
-// Merge helper function for merge sort
+// ================================================================================
+//  Public functions
+// ================================================================================
+
 void merge(LogRecord **arr, int left, int mid, int right)
 {
     int leftSize = mid - left + 1;
     int rightSize = right - mid;
 
-    // Create temporary arrays
+    // Cấp phát các mảng phụ tạm thời để lưu trữ dữ liệu hai phân vùng
     LogRecord **leftArr = new LogRecord *[leftSize];
     LogRecord **rightArr = new LogRecord *[rightSize];
 
-    // Copy data to temp arrays
+    // Sao chép dữ liệu trích xuất từ mảng gốc vào mảng tạm
     for (int i = 0; i < leftSize; i++)
     {
         leftArr[i] = arr[left + i];
@@ -22,12 +30,12 @@ void merge(LogRecord **arr, int left, int mid, int right)
         rightArr[j] = arr[mid + 1 + j];
     }
 
-    // Merge the temp arrays back into arr
+    // Tiến hành trộn (merge) hai mảng tạm tuần tự trở lại mảng gốc arr
     int i = 0, j = 0, k = left;
 
     while (i < leftSize && j < rightSize)
     {
-        // Use <= for stable sort (preserves original order on ties)
+        // Sử dụng toán tử toán học `<=` để đảm bảo tính sắp xếp ổn định (Stable Sort)
         if (leftArr[i]->timestamp <= rightArr[j]->timestamp)
         {
             arr[k] = leftArr[i];
@@ -41,7 +49,7 @@ void merge(LogRecord **arr, int left, int mid, int right)
         k++;
     }
 
-    // Copy remaining elements from left array
+    // Sao chép các phần tử còn dư lại của mảng tạm bên trái (nếu có)
     while (i < leftSize)
     {
         arr[k] = leftArr[i];
@@ -49,7 +57,7 @@ void merge(LogRecord **arr, int left, int mid, int right)
         k++;
     }
 
-    // Copy remaining elements from right array
+    // Sao chép các phần tử còn dư lại của mảng tạm bên phải (nếu có)
     while (j < rightSize)
     {
         arr[k] = rightArr[j];
@@ -57,15 +65,16 @@ void merge(LogRecord **arr, int left, int mid, int right)
         k++;
     }
 
+    // Thu hồi vùng nhớ tạm thời của hai mảng phụ
     delete[] leftArr;
     delete[] rightArr;
 }
 
-// Merge sort - recursive sort by timestamp
 void mergeSort(LogRecord **arr, int left, int right)
 {
     if (left < right)
     {
+        // Tính toán chỉ mục chia đôi tránh hiện tượng tràn số nguyên (Overflow)
         int mid = left + (right - left) / 2;
 
         mergeSort(arr, left, mid);
@@ -74,7 +83,6 @@ void mergeSort(LogRecord **arr, int left, int right)
     }
 }
 
-// Build sorted index
 void buildSortedIndex(SortedIndex &idx, DataStore &store)
 {
     idx.count = store.count;
@@ -85,26 +93,26 @@ void buildSortedIndex(SortedIndex &idx, DataStore &store)
         return;
     }
 
-    // Allocate and copy all record pointers
+    // Cấp phát mảng con trỏ phẳng có kích thước bằng quy mô DataStore
     idx.records = new LogRecord *[idx.count];
 
+    // Tạo bản sao các con trỏ tham chiếu từ DataStore sang mảng chỉ mục mới
     for (int i = 0; i < idx.count; i++)
     {
         idx.records[i] = get(store, i);
     }
 
-    // Sort by timestamp using merge sort
+    // Tiến hành sắp xếp mảng con trỏ dựa theo trường dữ liệu timestamp
     if (idx.count > 1)
     {
         mergeSort(idx.records, 0, idx.count - 1);
     }
 }
 
-// Binary search - find first record with timestamp >= t
 int binarySearchStart(const SortedIndex &idx, long long t)
 {
     int left = 0, right = idx.count - 1;
-    int result = idx.count; // Default: all records < t
+    int result = idx.count; // Trạng thái mặc định nếu toàn bộ bản ghi đều nhỏ hơn t
 
     while (left <= right)
     {
@@ -113,22 +121,21 @@ int binarySearchStart(const SortedIndex &idx, long long t)
         if (idx.records[mid]->timestamp >= t)
         {
             result = mid;
-            right = mid - 1; // Keep searching left
+            right = mid - 1; // Thu hẹp không gian tìm kiếm sang nửa bên trái để tìm vị trí biên đầu tiên
         }
         else
         {
-            left = mid + 1; // Search right
+            left = mid + 1;  // Dịch biên sang phân nửa bên phải
         }
     }
 
     return result;
 }
 
-// Binary search - find last record with timestamp <= t
 int binarySearchEnd(const SortedIndex &idx, long long t)
 {
     int left = 0, right = idx.count - 1;
-    int result = -1; // Default: all records > t
+    int result = -1; // Trạng thái mặc định nếu toàn bộ bản ghi đều lớn hơn t
 
     while (left <= right)
     {
@@ -137,19 +144,17 @@ int binarySearchEnd(const SortedIndex &idx, long long t)
         if (idx.records[mid]->timestamp <= t)
         {
             result = mid;
-            left = mid + 1; // Keep searching right
+            left = mid + 1;  // Thu hẹp không gian sang nửa bên phải để tìm vị trí biên cuối cùng
         }
         else
         {
-            right = mid - 1; // Search left
+            right = mid - 1; // Dịch biên sang phân nửa bên trái
         }
     }
 
     return result;
 }
 
-// Clear sorted index - only delete array, NOT individual pointers
-// LogRecord ownership remains with DataStore
 void clearSortedIndex(SortedIndex &idx)
 {
     if (idx.records != nullptr)

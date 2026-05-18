@@ -1,10 +1,6 @@
 /**
  * @file        Deduplicator.h
  * @brief       Module loại bỏ các bản ghi trùng lặp trong DataStore.
- *
- * @author      QCodesDS
- * @date        2026-05-13
- * @version     1.0
  */
 
 #ifndef DEDUPLICATOR_H

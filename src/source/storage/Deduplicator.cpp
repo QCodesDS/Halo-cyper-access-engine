@@ -1,8 +1,6 @@
 /**
  * @file        Deduplicator.cpp
  * @brief       Implementation của module loại bỏ bản ghi trùng lặp.
- * @author      QCodesDS
- * @date        2026-05-13
  */
 
 #include "storage/Deduplicator.h"

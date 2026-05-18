@@ -1,16 +1,30 @@
+/**
+ * @file        ResourceJourneyQuery.cpp
+ * @brief       Implementation các hàm lọc dữ liệu, sắp xếp cục bộ và định dạng hiển thị hành trình tài nguyên.
+ */
+
 #include "query/ResourceJourneyQuery.h"
 #include "utils/TimeUtils.h"
 #include "utils/StringUtils.h"
 #include <cstdio>
 #include <cstring>
 
-// Helper: insertion sort for small result sets
+// ================================================================================
+//  Helper functions (Nội bộ)
+// ================================================================================
+
+/**
+ * @brief Thuật toán sắp xếp chèn (Insertion Sort) áp dụng cục bộ cho tập kết quả nhỏ.
+ * @param records Mảng các con trỏ bản ghi LogRecord cần sắp xếp ổn định
+ * @param count Số lượng phần tử hiện tại có trong mảng
+ */
 static void insertionSortByTimestamp(LogRecord **records, int count)
 {
     for (int i = 1; i < count; i++)
     {
         LogRecord *key = records[i];
         int j = i - 1;
+        
         while (j >= 0 && records[j]->timestamp > key->timestamp)
         {
             records[j + 1] = records[j];
@@ -20,21 +34,26 @@ static void insertionSortByTimestamp(LogRecord **records, int count)
     }
 }
 
+// ================================================================================
+//  Public functions
+// ================================================================================
+
 void executeResourceJourney(const ResourceJourneyQuery &q, const HashIndex &hashIdx, const SortedIndex &)
 {
-    // Get all records for this resource
+    // Lấy ra danh sách toàn bộ các bản ghi liên quan đến mã tài nguyên này từ bảng băm
     int resourceRecordCount = 0;
     LogRecord **resourceRecords = getByResource(hashIdx, q.resourceId, resourceRecordCount);
 
-    // Filter records within time range
+    // Con trỏ quản lý mảng lọc tạm thời
     LogRecord **filtered = nullptr;
     int filteredCount = 0;
 
     if (resourceRecordCount > 0)
     {
-        // Allocate temporary array for filtered results
+        // Cấp phát vùng nhớ động tạm thời cho mảng kết quả sau lọc
         filtered = new LogRecord *[resourceRecordCount];
 
+        // Tiến hành lọc tuyến tính các bản ghi nằm trong khoảng thời gian [timeStart, timeEnd]
         for (int i = 0; i < resourceRecordCount; i++)
         {
             if (resourceRecords[i]->timestamp >= q.timeStart && resourceRecords[i]->timestamp <= q.timeEnd)
@@ -44,20 +63,21 @@ void executeResourceJourney(const ResourceJourneyQuery &q, const HashIndex &hash
         }
     }
 
-    // Sort filtered results by timestamp
+    // Sắp xếp lại tập kết quả sau khi lọc theo thứ tự thời gian tăng dần
     if (filteredCount > 0)
     {
         insertionSortByTimestamp(filtered, filteredCount);
     }
 
-    // Print header with date range
+    // Chuyển đổi định dạng timestamp Unix sang chuỗi ngày giờ đọc được (Readable string)
     std::string startDate = epochToReadable(q.timeStart);
     std::string endDate = epochToReadable(q.timeEnd);
 
-    // Extract just the date part (YYYY-MM-DD)
+    // Trích xuất cấu trúc chuỗi chỉ lấy phần ngày (YYYY-MM-DD)
     std::string startDateOnly = startDate.substr(0, 10);
     std::string endDateOnly = endDate.substr(0, 10);
 
+    // In thông tin tiêu đề truy vấn hành trình
     printf("Resource Journey: %s | %s to %s\n", q.resourceId.c_str(), startDateOnly.c_str(), endDateOnly.c_str());
     printf("───────────────────────────────────────────────────────────────────────────────────\n");
 
@@ -67,7 +87,8 @@ void executeResourceJourney(const ResourceJourneyQuery &q, const HashIndex &hash
     }
     else
     {
-        // Print each record in format: [YYYY-MM-DD HH:MM:SS] user_id → device_id → app_id (event_type @ location)
+        // Duyệt và hiển thị chi tiết từng bản ghi log thỏa mãn điều kiện
+        // Định dạng đầu ra: [YYYY-MM-DD HH:MM:SS] user_id → device_id → app_id (event_type @ location)
         for (int i = 0; i < filteredCount; i++)
         {
             LogRecord *record = filtered[i];
@@ -88,7 +109,7 @@ void executeResourceJourney(const ResourceJourneyQuery &q, const HashIndex &hash
         printf("Total: %d events\n", filteredCount);
     }
 
-    // Cleanup (note: resourceRecords is owned by HashIndex, do NOT delete it)
+    // Thu hồi bộ nhớ mảng tạm thời (Lưu ý: Không xóa các LogRecord vì quyền sở hữu thuộc về DataStore)
     if (filtered != nullptr)
     {
         delete[] filtered;

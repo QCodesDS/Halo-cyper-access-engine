@@ -1,8 +1,6 @@
 /**
  * @file        Location.cpp
  * @brief       Implementation của các hàm chuyển đổi cho Location.
- * @author      QCodesDS
- * @date        2026-05-12
  */
 
 #include "models/Location.h"

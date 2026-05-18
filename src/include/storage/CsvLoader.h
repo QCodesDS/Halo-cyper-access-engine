@@ -3,10 +3,6 @@
  * @brief       Module tải dữ liệu từ file CSV vào DataStore.
  *
  * Hỗ trợ đọc file CSV theo định dạng chuẩn của hệ thống log an ninh.
- *
- * @author      QCodesDS
- * @date        2026-05-13
- * @version     1.0
  */
 
 #ifndef CSV_LOADER_H

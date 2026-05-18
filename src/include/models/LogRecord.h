@@ -4,10 +4,6 @@
  *
  * Cấu trúc này được thiết kế để lưu trữ thông tin sự kiện truy cập tài nguyên
  * một cách hiệu quả, hỗ trợ logging, audit trail và phân tích bảo mật.
- *
- * @author      QCodesDS
- * @date        2026-05-12
- * @version     1.0
  */
 
 #ifndef LOG_RECORD_H

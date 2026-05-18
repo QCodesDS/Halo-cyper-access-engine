@@ -3,10 +3,6 @@
  * @brief       Các hàm tiện ích xử lý chuỗi string.
  *
  * Cung cấp các chức năng phổ biến: split, trim, so sánh chuỗi.
- *
- * @author      QCodesDS
- * @date        2026-05-12
- * @version     1.0
  */
 
 #ifndef STRING_UTILS_H
