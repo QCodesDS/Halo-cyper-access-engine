@@ -1,20 +1,15 @@
+#include "anomaly/AnomalyEngine.h"
 #include "cli/Printer.h"
 #include "indexing/IndexManager.h"
-#include "models/EventType.h"
-#include "models/Location.h"
-#include "models/LogRecord.h"
 #include "query/QueryEngine.h"
-#include "anomaly/AnomalyEngine.h"
 #include "storage/CsvLoader.h"
 #include "storage/DataStore.h"
 #include "storage/Deduplicator.h"
-#include "storage/Validator.h"
 #include "utils/StringUtils.h"
-#include "utils/TimeUtils.h"
-#include <cstring>
+#include <chrono>
 #include <iostream>
 #include <sstream>
-#include <chrono>
+
 
 int main() {
   std::cout << "=== Halo Cyber Access Engine ===" << std::endl;
@@ -94,13 +89,13 @@ int main() {
         runAnomalyDetection(results, store, indexMgr.hashIdx);
         auto endDetect = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = endDetect - startDetect;
-        
+
         printAnomalyReport(results);
-        
+
         std::stringstream ss;
         ss << "Detection completed in " << diff.count() << "s";
         printInfo(ss.str());
-        
+
         clearAnomalyList(results);
       }
     }
@@ -108,22 +103,27 @@ int main() {
     else if (strEquals(command, "help")) {
       std::cout << "Available commands:" << std::endl;
       std::cout << "  load <filepath>                          - Load CSV file"
-           << std::endl;
-      std::cout << "  query user <uid> <t_start> <t_end>       - User journey query"
-           << std::endl;
-      std::cout << "  query resource <rid> <t_start> <t_end>   - Resource journey "
-              "query"
-           << std::endl;
-      std::cout << "  top resources <t_start> <t_end>          - Top resources by "
-              "count"
-           << std::endl;
-      std::cout << "  detect                                   - Run anomaly detection"
-           << std::endl;
-      std::cout << "  help                                     - Show this help "
-              "message"
-           << std::endl;
+                << std::endl;
+      std::cout
+          << "  query user <uid> <t_start> <t_end>       - User journey query"
+          << std::endl;
+      std::cout
+          << "  query resource <rid> <t_start> <t_end>   - Resource journey "
+             "query"
+          << std::endl;
+      std::cout
+          << "  top resources <t_start> <t_end>          - Top resources by "
+             "count"
+          << std::endl;
+      std::cout << "  detect                                   - Run anomaly "
+                   "detection"
+                << std::endl;
+      std::cout
+          << "  help                                     - Show this help "
+             "message"
+          << std::endl;
       std::cout << "  exit                                     - Exit program"
-           << std::endl;
+                << std::endl;
     }
     // Exit command
     else if (strEquals(command, "exit")) {

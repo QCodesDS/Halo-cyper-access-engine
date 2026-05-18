@@ -1,0 +1,12 @@
+CompileFlags:
+  Compiler: C:/msys64/mingw64/bin/g++.exe
+  Add:
+    - "-std=c++17"
+    - "--target=x86_64-w64-mingw32"
+    - "-fparse-all-comments"
+  Remove:
+    - "-Wconversion"
+  CompilationDatabase: .
+
+Index:
+  Background: Build

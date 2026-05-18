@@ -8,7 +8,7 @@
 | 02    | Indexing — Hash Table + Sorted Index         | Ngày 4–5   | ✅ Hoàn thành   |
 | 03    | Query Engine (Midterm)                       | Ngày 6–8   | ✅ Hoàn thành   |
 | 04    | Scale Up — 1M rows + Memory audit            | Ngày 9–10  | ✅ Hoàn thành   |
-| 05    | Anomaly Detection (Final)                    | Ngày 11–17 | ⬜ Chưa bắt đầu |
+| 05    | Anomaly Detection (Final)                    | Ngày 11–17 | 🔄 Đang làm     |
 | 06    | Polish + Docs + Submit                       | Ngày 18–21 | ⬜ Chưa bắt đầu |
 
 ---

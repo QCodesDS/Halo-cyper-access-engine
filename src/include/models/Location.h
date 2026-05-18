@@ -15,24 +15,23 @@
  * @enum Location
  * @brief Các quốc gia / khu vực địa lý được hỗ trợ trong hệ thống.
  */
-enum Location
-{
-    US,              ///< Hoa Kỳ
-    VN,              ///< Việt Nam
-    JP,              ///< Nhật Bản
-    KR,              ///< Hàn Quốc
-    SG,              ///< Singapore
-    CN,              ///< Trung Quốc
-    DE,              ///< Đức
-    FR,              ///< Pháp
-    UK,              ///< Vương quốc Anh
-    AU,              ///< Úc
-    CA,              ///< Canada
-    IN,              ///< Ấn Độ
-    BR,              ///< Brazil
-    RU,              ///< Nga
-    TH,              ///< Thái Lan
-    UNKNOWN_LOCATION ///< Không xác định
+enum Location {
+  US,              ///< Hoa Kỳ
+  VN,              ///< Việt Nam
+  JP,              ///< Nhật Bản
+  KR,              ///< Hàn Quốc
+  SG,              ///< Singapore
+  CN,              ///< Trung Quốc
+  DE,              ///< Đức
+  FR,              ///< Pháp
+  UK,              ///< Vương quốc Anh
+  AU,              ///< Úc
+  CA,              ///< Canada
+  IN,              ///< Ấn Độ
+  BR,              ///< Brazil
+  RU,              ///< Nga
+  TH,              ///< Thái Lan
+  UNKNOWN_LOCATION ///< Không xác định
 };
 
 /**

@@ -15,17 +15,16 @@
  * @enum EventType
  * @brief Các loại sự kiện an ninh hệ thống.
  */
-enum EventType
-{
-    LOGIN,         ///< Đăng nhập thành công
-    LOGOUT,        ///< Đăng xuất
-    TOKEN_REFRESH, ///< Làm mới token
-    ACCESS,        ///< Truy cập tài nguyên
-    FAILED_LOGIN,  ///< Đăng nhập thất bại
-    OPEN_APP,      ///< Mở ứng dụng
-    DOWNLOAD,      ///< Tải xuống tài nguyên
-    ADMIN_ACTION,  ///< Hành động của quản trị viên
-    UNKNOWN_EVENT  ///< Loại sự kiện không xác định
+enum EventType {
+  LOGIN,         ///< Đăng nhập thành công
+  LOGOUT,        ///< Đăng xuất
+  TOKEN_REFRESH, ///< Làm mới token
+  ACCESS,        ///< Truy cập tài nguyên
+  FAILED_LOGIN,  ///< Đăng nhập thất bại
+  OPEN_APP,      ///< Mở ứng dụng
+  DOWNLOAD,      ///< Tải xuống tài nguyên
+  ADMIN_ACTION,  ///< Hành động của quản trị viên
+  UNKNOWN_EVENT  ///< Loại sự kiện không xác định
 };
 
 /**
