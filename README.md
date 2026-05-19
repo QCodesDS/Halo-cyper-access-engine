@@ -195,5 +195,5 @@ Halo-access-system/
 ## 🎓 FOOTER
 
 - **Trường**: Đại học Khoa học Tự nhiên - ĐHQG TP.HCM (HCMUS)
-- **Môn học**: Cơ Sở Lập Trình (CSC10001) — Năm học 2025-2026
-- **Sinh viên**: 24120421 — HCMUS
+- **Môn học**: Cơ Sở Lập Trình (CSC10012) — Năm học 2025-2026
+- **Sinh viên**: 24120421
