@@ -188,36 +188,50 @@ static const char* getRiskLevel(AnomalyType type) {
 //  Public functions
 // ================================================================================
 
-void runAnomalyDetection(AnomalyList& results, const DataStore& store, const HashIndex& hashIdx) {
+void runAnomalyDetection(AnomalyList& results, const DataStore& store, const HashIndex& hashIdx, const std::string& typeFilter) {
     AnomalyList rawResults;
     initAnomalyList(rawResults);
 
-    std::cout << "[INFO] Running basic detectors..." << std::endl;
-    // 1. Chạy các detector cơ bản dựa trên ngưỡng thô
-    detectMultiDeviceLogin(rawResults, hashIdx);
-    detectConsecutiveFailedLogin(rawResults, hashIdx);
-    detectResourceFlood(rawResults, hashIdx);
-    detectOffHoursAccess(rawResults, store);
-    detectImpossibleTravel(rawResults, hashIdx);
-    detectLocationChurning(rawResults, hashIdx);
+    bool runThreshold = (typeFilter == "all" || typeFilter == "threshold");
+    bool runBehavior  = (typeFilter == "all" || typeFilter == "behavior");
+    bool runSession   = (typeFilter == "all" || typeFilter == "session");
+    bool runAdvanced  = (typeFilter == "all" || typeFilter == "advanced");
 
-    std::cout << "[INFO] Building sessions..." << std::endl;
-    // 2. Gom nhóm chuỗi sự kiện và xây dựng phiên làm việc (Session)
-    SessionList sessions;
-    buildSessions(sessions, hashIdx);
+    if (runThreshold) {
+        std::cout << "[INFO] Running threshold detectors..." << std::endl;
+        detectMultiDeviceLogin(rawResults, hashIdx);
+        detectConsecutiveFailedLogin(rawResults, hashIdx);
+        detectResourceFlood(rawResults, hashIdx);
+        detectOffHoursAccess(rawResults, store);
+    }
 
-    std::cout << "[INFO] Running session detectors..." << std::endl;
-    // 3. Chạy các bộ lọc phân tích bất thường trên thực thể Session
-    detectLongSession(rawResults, sessions);
-    detectSessionFlood(rawResults, sessions);
-    detectDangerousSequence(rawResults, sessions);
+    if (runBehavior) {
+        std::cout << "[INFO] Running behavior detectors..." << std::endl;
+        detectImpossibleTravel(rawResults, hashIdx);
+        detectLocationChurning(rawResults, hashIdx);
+    }
 
-    clearSessions(sessions);
+    if (runSession) {
+        std::cout << "[INFO] Building sessions..." << std::endl;
+        SessionList sessions;
+        buildSessions(sessions, hashIdx);
 
-    std::cout << "[INFO] Running advanced detectors..." << std::endl;
-    // 4. Chạy các bộ dò tìm nâng cao phức tạp chuỗi hành vi nâng cao
-    detectBruteForce(rawResults, hashIdx);
-    detectDormantActivation(rawResults, hashIdx);
+        std::cout << "[INFO] Running session detectors..." << std::endl;
+        detectLongSession(rawResults, sessions);
+        detectSessionFlood(rawResults, sessions);
+        detectDangerousSequence(rawResults, sessions);
+
+        clearSessions(sessions);
+    }
+
+    if (runAdvanced) {
+        std::cout << "[INFO] Running advanced detectors..." << std::endl;
+        detectBruteForce(rawResults, hashIdx);
+        detectDormantActivation(rawResults, hashIdx);
+        detectPrivilegeEscalation(rawResults, hashIdx);
+        detectDataExfiltration(rawResults, hashIdx);
+        detectLateralMovement(rawResults, hashIdx);
+    }
 
     std::cout << "[INFO] Sorting " << rawResults.count << " anomalies..." << std::endl;
     // 5. Đồng bộ dòng thời gian trước khi tiến hành tối ưu hóa kết quả

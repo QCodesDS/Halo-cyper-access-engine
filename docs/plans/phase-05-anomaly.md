@@ -12,7 +12,7 @@
 
 ### Session Builder (prereq cho SessionDetector)
 
-- [ ] `src/session/SessionBuilder.h/.cpp`
+- [x] `src/session/SessionBuilder.h/.cpp`
   - Group events theo user_id, sort by timestamp
   - Session bắt đầu: LOGIN hoặc event đầu tiên của chuỗi
   - Session kết thúc: LOGOUT hoặc gap > 30 phút
@@ -20,28 +20,28 @@
 
 ### Threshold Detector
 
-- [ ] `src/anomaly/ThresholdDetector.h/.cpp`
-  - [ ] A01: user dùng > 3 device khác nhau trong 60 phút
-  - [ ] A02: user có > 5 FAILED_LOGIN liên tiếp (không xen event thành công)
-  - [ ] A03: device truy cập > 20 resource khác nhau trong 30 phút
-  - [ ] A04: event ngoài 08:00–18:00 UTC
+- [x] `src/anomaly/ThresholdDetector.h/.cpp`
+  - [x] A01: user dùng > 3 device khác nhau trong 60 phút
+  - [x] A02: user có > 5 FAILED_LOGIN liên tiếp (không xen event thành công)
+  - [x] A03: device truy cập > 20 resource khác nhau trong 30 phút
+  - [x] A04: event ngoài 08:00–18:00 UTC
 
 ### Behavior Detector
 
-- [ ] `src/anomaly/BehaviorDetector.h/.cpp`
-  - [ ] A05: user xuất hiện 2+ location khác nhau trong 120 phút
-  - [ ] A06: user đổi location > 3 lần trong 60 phút
+- [x] `src/anomaly/BehaviorDetector.h/.cpp`
+  - [x] A05: user xuất hiện 2+ location khác nhau trong 120 phút
+  - [x] A06: user đổi location > 3 lần trong 60 phút
 
 ### Session Detector
 
-- [ ] `src/anomaly/SessionDetector.h/.cpp`
-  - [ ] A07: phiên > 8 tiếng liên tục
-  - [ ] A08: user tạo > 5 phiên trong 60 phút
-  - [ ] A09: trong 1 phiên có ADMIN_ACTION → DOWNLOAD trong 10 phút
+- [x] `src/anomaly/SessionDetector.h/.cpp`
+  - [x] A07: phiên > 8 tiếng liên tục
+  - [x] A08: user tạo > 5 phiên trong 60 phút
+  - [x] A09: trong 1 phiên có ADMIN_ACTION → DOWNLOAD trong 10 phút
 
 ### Anomaly Engine
 
-- [ ] `src/anomaly/AnomalyEngine.h/.cpp`
+- [x] `src/anomaly/AnomalyEngine.h/.cpp`
   - Gọi tất cả detector, tổng hợp kết quả
   - Dedup: cùng user + cùng loại anomaly + cùng time window → 1 entry
   - Format report: user_id | anomaly_type | timestamp | detail
@@ -49,17 +49,20 @@
 
 ### Advanced Detector (Bonus)
 
-- [ ] `src/anomaly/AdvancedDetector.h/.cpp`
-  - [ ] A10: ≥ 5 FAILED_LOGIN liên tiếp → cuối cùng LOGIN thành công
-  - [ ] A11: user không activity > 7 ngày → đột ngột > 20 event trong 1 giờ
+- [x] `src/anomaly/AdvancedDetector.h/.cpp`
+  - [x] A10: ≥ 5 FAILED_LOGIN liên tiếp → cuối cùng LOGIN thành công
+  - [x] A11: user không activity > 7 ngày → đột ngột > 20 event trong 1 giờ
+  - [x] A12: privilege escalation detection (extra bonus)
+  - [x] A13: data exfiltration detection (extra bonus)
+  - [x] A14: lateral movement detection (extra bonus)
 
 ### CLI
 
-- [ ] `detect anomaly` — chạy tất cả
-- [ ] `detect anomaly --type=threshold`
-- [ ] `detect anomaly --type=behavior`
-- [ ] `detect anomaly --type=session`
-- [ ] `detect anomaly --type=advanced`
+- [x] `detect anomaly` — chạy tất cả
+- [x] `detect anomaly --type=threshold`
+- [x] `detect anomaly --type=behavior`
+- [x] `detect anomaly --type=session`
+- [x] `detect anomaly --type=advanced`
 
 ---
 
@@ -145,9 +148,9 @@ const int    BURST_EVENTS_PER_HOUR   = 20;
 
 ## Definition of Done
 
-- [ ] Tất cả A01–A09 detect đúng với test cases
-- [ ] A10, A11 hoạt động (bonus)
-- [ ] Memory giải phóng sau mỗi lần detect
-- [ ] Thời gian detect < 10s trên 1M records
-- [ ] Update CHANGELOG + master-plan
-- [ ] **FINAL SUBMITTED ✅**
+- [x] Tất cả A01–A09 detect đúng với test cases
+- [x] A10, A11 hoạt động (bonus)
+- [x] Memory giải phóng sau mỗi lần detect
+- [x] Thời gian detect < 10s trên 1M records
+- [x] Update CHANGELOG + master-plan
+- [x] **FINAL SUBMITTED ✅**

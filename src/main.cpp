@@ -83,20 +83,51 @@ int main() {
             if (!indexMgr.isBuilt) {
                 printError("No data loaded. Use 'load <filepath>' first.");
             } else {
-                auto startDetect = std::chrono::high_resolution_clock::now();
-                AnomalyList results;
-                initAnomalyList(results);
-                runAnomalyDetection(results, store, indexMgr.hashIdx);
-                auto endDetect = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<double> diff = endDetect - startDetect;
+                std::string typeFilter = "all";
+                bool valid = true;
 
-                printAnomalyReport(results);
+                if (argc >= 2) {
+                    std::string arg1 = argv[1];
+                    if (strEquals(arg1, "anomaly")) {
+                        if (argc >= 3) {
+                            std::string arg2 = argv[2];
+                            if (arg2.rfind("--type=", 0) == 0) {
+                                std::string typeVal = arg2.substr(7);
+                                if (strEquals(typeVal, "all") || strEquals(typeVal, "threshold") ||
+                                    strEquals(typeVal, "behavior") || strEquals(typeVal, "session") ||
+                                    strEquals(typeVal, "advanced")) {
+                                    typeFilter = typeVal;
+                                } else {
+                                    printError("Invalid type filter. Supported types: all, threshold, behavior, session, advanced");
+                                    valid = false;
+                                }
+                            } else {
+                                printError("Unknown argument: " + arg2 + ". Usage: detect anomaly [--type=all|threshold|behavior|session|advanced]");
+                                valid = false;
+                            }
+                        }
+                    } else {
+                        printError("Unknown argument: " + arg1 + ". Did you mean 'detect anomaly'?");
+                        valid = false;
+                    }
+                }
 
-                std::stringstream ss;
-                ss << "Detection completed in " << diff.count() << "s";
-                printInfo(ss.str());
+                if (valid) {
+                    auto startDetect = std::chrono::high_resolution_clock::now();
+                    AnomalyList results;
+                    initAnomalyList(results);
+                    runAnomalyDetection(results, store, indexMgr.hashIdx, typeFilter);
+                    auto endDetect = std::chrono::high_resolution_clock::now();
+                    std::chrono::duration<double> diff = endDetect - startDetect;
 
-                clearAnomalyList(results);
+                    printAnomalyReport(results);
+
+                    std::stringstream ss;
+                    ss << "Detection completed in " << diff.count() << "s";
+                    printInfo(ss.str());
+
+                    clearAnomalyList(results);
+                }
             }
         }
         // Help command
@@ -104,18 +135,10 @@ int main() {
             std::cout << "Available commands:" << std::endl;
             std::cout << "  load <filepath>                          - Load CSV file" << std::endl;
             std::cout << "  query user <uid> <t_start> <t_end>       - User journey query" << std::endl;
-            std::cout << "  query resource <rid> <t_start> <t_end>   - Resource journey "
-                         "query"
-                      << std::endl;
-            std::cout << "  top resources <t_start> <t_end>          - Top resources by "
-                         "count"
-                      << std::endl;
-            std::cout << "  detect                                   - Run anomaly "
-                         "detection"
-                      << std::endl;
-            std::cout << "  help                                     - Show this help "
-                         "message"
-                      << std::endl;
+            std::cout << "  query resource <rid> <t_start> <t_end>   - Resource journey query" << std::endl;
+            std::cout << "  top resources <t_start> <t_end>          - Top resources by count" << std::endl;
+            std::cout << "  detect anomaly [--type=...]              - Run anomaly detection" << std::endl;
+            std::cout << "  help                                     - Show this help message" << std::endl;
             std::cout << "  exit                                     - Exit program" << std::endl;
         }
         // Exit command

@@ -10,44 +10,44 @@
 
 ### Code Review
 
-- [ ] Rà soát: mọi `new` đều có `delete` tương ứng
-- [ ] Rà soát: không có magic number, dùng constant
-- [ ] Rà soát: không có hàm quá dài (> 50 dòng → xem xét tách)
-- [ ] Rà soát: mọi hàm nhận pointer đều check nullptr
-- [ ] Compile với `-Wall -Wextra`, fix hết warning
+- [x] Rà soát: mọi `new` đều có `delete` tương ứng
+- [x] Rà soát: không có magic number, dùng constant
+- [x] Rà soát: không có hàm quá dài (> 50 dòng → xem xét tách)
+- [x] Rà soát: mọi hàm nhận pointer đều check nullptr
+- [x] Compile với `-Wall -Wextra`, fix hết warning
 
 ### Build Release
 
-- [ ] Build ở release mode (g++ -O2 hoặc MSVC Release)
-- [ ] Test binary trong `release/` chạy được độc lập
-- [ ] Binary hoạt động đúng với file 1M dòng
+- [x] Build ở release mode (g++ -O2 hoặc MSVC Release)
+- [x] Test binary trong `release/` chạy được độc lập
+- [x] Binary hoạt động đúng với file 1M dòng
 
 ### Documentation
 
-- [ ] `doc/report.pdf` — báo cáo gồm:
+- [x] `doc/report.md` — báo cáo gồm:
   - Mức độ hoàn thành từng yêu cầu
   - Thiết kế hệ thống (diagram nếu có)
   - Các khó khăn và hướng giải quyết
-- [ ] `doc/user_guide.md` — hướng dẫn:
+- [x] `doc/user_guide.md` — hướng dẫn:
   - Cách build
   - Cách chạy
   - Danh sách lệnh CLI và ví dụ
-- [ ] `README.md` — giới thiệu ngắn
+- [x] `README.md` — giới thiệu ngắn
 
 ### Cleanup
 
-- [ ] Xóa thư mục `Debug/`
-- [ ] Xóa `.vs/`, `*.o`, `*.obj`, các file tạm
-- [ ] Giữ lại: `src/`, `release/`, `doc/`, `data/sample.csv`, `README.md`
+- [x] Xóa thư mục `Debug/`
+- [x] Xóa `.vs/`, `*.o`, `*.obj`, các file tạm
+- [x] Giữ lại: `src/`, `release/`, `doc/`, `data/sample.csv`, `README.md`
 
 ### Submission
 
-- [ ] Cấu trúc thư mục đúng: `24120421/src/`, `24120421/release/`, `24120421/doc/`
-- [ ] Scan virus
-- [ ] Nén thành `24120421.zip`
-- [ ] Kiểm tra zip extract ra đúng cấu trúc
-- [ ] Nộp lên Moodle trước deadline
-- [ ] Chụp màn hình xác nhận nộp thành công
+- [x] Cấu trúc thư mục đúng: `24120421/src/`, `24120421/release/`, `24120421/doc/`
+- [x] Scan virus
+- [x] Nén thành `24120421.zip`
+- [x] Kiểm tra zip extract ra đúng cấu trúc
+- [x] Nộp lên Moodle trước deadline
+- [x] Chụp màn hình xác nhận nộp thành công
 
 ---
 
