@@ -256,5 +256,5 @@ Dự án này được phân phối theo giấy phép mã nguồn mở **MIT Lic
 ---
 
 <div align="center">
-  Made with ❤️ by QCodesDS • © 2026 HCMUS
+  Được phát triển với 💖 bởi <b>QCodesDS</b>. Hãy thả một ⭐ nếu bạn thấy dự án hữu ích!
 </div>

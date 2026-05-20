@@ -15,28 +15,38 @@
 //  Public functions
 // ================================================================================
 
-void detectBruteForce(AnomalyList& results, const HashIndex& hashIdx) {
-    for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++) {
-        HashNode* node = hashIdx.byUser.buckets[bucket];
-        while (node != nullptr) {
+void detectBruteForce(AnomalyList &results, const HashIndex &hashIdx)
+{
+    for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++)
+    {
+        HashNode *node = hashIdx.byUser.buckets[bucket];
+        while (node != nullptr)
+        {
             int failedStreak = 0;
 
-            for (int i = 0; i < node->count; i++) {
-                LogRecord* event = node->values[i];
+            for (int i = 0; i < node->count; i++)
+            {
+                LogRecord *event = node->values[i];
 
-                if (event->event_type == EventType::FAILED_LOGIN) {
+                if (event->event_type == EventType::FAILED_LOGIN)
+                {
                     failedStreak++;
-                } else if (event->event_type == EventType::LOGIN) {
-                    if (failedStreak >= AnomalyConfig::MAX_FAILED_LOGIN_STREAK) {
-                        AnomalyRecord* rec = new AnomalyRecord();
+                }
+                else if (event->event_type == EventType::LOGIN)
+                {
+                    if (failedStreak >= AnomalyConfig::MAX_FAILED_LOGIN_STREAK)
+                    {
+                        AnomalyRecord *rec = new AnomalyRecord();
                         rec->type = AnomalyType::BRUTE_FORCE;
                         rec->userId = node->key;
                         rec->timestamp = event->timestamp;
                         rec->detail = std::to_string(failedStreak) + " fails -> success [BONUS]";
                         pushAnomaly(results, rec);
                     }
-                    failedStreak = 0;  // Reset chuỗi đếm sau khi đăng nhập thành công
-                } else {
+                    failedStreak = 0; // Reset chuỗi đếm sau khi đăng nhập thành công
+                }
+                else
+                {
                     // Các sự kiện trung gian khác cũng làm đứt chuỗi brute force ngắt quãng
                     failedStreak = 0;
                 }
@@ -46,33 +56,41 @@ void detectBruteForce(AnomalyList& results, const HashIndex& hashIdx) {
     }
 }
 
-void detectDormantActivation(AnomalyList& results, const HashIndex& hashIdx) {
-    for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++) {
-        HashNode* node = hashIdx.byUser.buckets[bucket];
-        while (node != nullptr) {
-            if (node->count < 2) {
+void detectDormantActivation(AnomalyList &results, const HashIndex &hashIdx)
+{
+    for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++)
+    {
+        HashNode *node = hashIdx.byUser.buckets[bucket];
+        while (node != nullptr)
+        {
+            if (node->count < 2)
+            {
                 node = node->next;
                 continue;
             }
 
-            for (int i = 1; i < node->count; i++) {
-                LogRecord* prevEvent = node->values[i - 1];
-                LogRecord* currentEvent = node->values[i];
+            for (int i = 1; i < node->count; i++)
+            {
+                LogRecord *prevEvent = node->values[i - 1];
+                LogRecord *currentEvent = node->values[i];
 
                 long long gap = currentEvent->timestamp - prevEvent->timestamp;
-                if (gap > (AnomalyConfig::DORMANT_DAYS * 86400))  // Quy đổi ngày ra giây (1 ngày = 86400s)
+                if (gap > (AnomalyConfig::DORMANT_DAYS * 86400)) // Quy đổi ngày ra giây (1 ngày = 86400s)
                 {
                     // Tài khoản đã ngủ đông vượt ngưỡng. Tiến hành đếm số lượng event phát sinh trong 1 giờ kế tiếp.
                     int burstCount = 0;
-                    for (int j = i; j < node->count; j++) {
-                        if (node->values[j]->timestamp - currentEvent->timestamp > 3600) {
-                            break;  // Vượt quá cửa sổ trượt 1 giờ (3600s)
+                    for (int j = i; j < node->count; j++)
+                    {
+                        if (node->values[j]->timestamp - currentEvent->timestamp > 3600)
+                        {
+                            break; // Vượt quá cửa sổ trượt 1 giờ (3600s)
                         }
                         burstCount++;
                     }
 
-                    if (burstCount > AnomalyConfig::BURST_EVENTS_PER_HOUR) {
-                        AnomalyRecord* rec = new AnomalyRecord();
+                    if (burstCount > AnomalyConfig::BURST_EVENTS_PER_HOUR)
+                    {
+                        AnomalyRecord *rec = new AnomalyRecord();
                         rec->type = AnomalyType::DORMANT_ACTIVATION;
                         rec->userId = node->key;
                         rec->timestamp = currentEvent->timestamp;
@@ -87,27 +105,35 @@ void detectDormantActivation(AnomalyList& results, const HashIndex& hashIdx) {
     }
 }
 
-void detectPrivilegeEscalation(AnomalyList& results, const HashIndex& hashIdx) {
-    for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++) {
-        HashNode* node = hashIdx.byUser.buckets[bucket];
-        while (node != nullptr) {
-            for (int i = 0; i < node->count; i++) {
-                LogRecord* currentEvent = node->values[i];
-                if (currentEvent->event_type == EventType::ADMIN_ACTION) {
+void detectPrivilegeEscalation(AnomalyList &results, const HashIndex &hashIdx)
+{
+    for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++)
+    {
+        HashNode *node = hashIdx.byUser.buckets[bucket];
+        while (node != nullptr)
+        {
+            for (int i = 0; i < node->count; i++)
+            {
+                LogRecord *currentEvent = node->values[i];
+                if (currentEvent->event_type == EventType::ADMIN_ACTION)
+                {
                     // Quét ngược dòng thời gian tối đa 5 phút (300 giây) để tìm dấu vết FAILED_LOGIN
-                    for (int j = i - 1; j >= 0; j--) {
-                        LogRecord* pastEvent = node->values[j];
-                        if (currentEvent->timestamp - pastEvent->timestamp > 300) {
-                            break;  // Đã vượt ra khỏi cửa sổ giám sát 5 phút
+                    for (int j = i - 1; j >= 0; j--)
+                    {
+                        LogRecord *pastEvent = node->values[j];
+                        if (currentEvent->timestamp - pastEvent->timestamp > 300)
+                        {
+                            break; // Đã vượt ra khỏi cửa sổ giám sát 5 phút
                         }
-                        if (pastEvent->event_type == EventType::FAILED_LOGIN) {
-                            AnomalyRecord* rec = new AnomalyRecord();
+                        if (pastEvent->event_type == EventType::FAILED_LOGIN)
+                        {
+                            AnomalyRecord *rec = new AnomalyRecord();
                             rec->type = AnomalyType::PRIVILEGE_ESCALATION;
                             rec->userId = node->key;
                             rec->timestamp = currentEvent->timestamp;
                             rec->detail = "ADMIN_ACTION within 5 min after FAILED_LOGIN [BONUS]";
                             pushAnomaly(results, rec);
-                            break;  // Giới hạn cảnh báo tối đa một lần cho mỗi sự kiện ADMIN_ACTION
+                            break; // Giới hạn cảnh báo tối đa một lần cho mỗi sự kiện ADMIN_ACTION
                         }
                     }
                 }
@@ -117,30 +143,39 @@ void detectPrivilegeEscalation(AnomalyList& results, const HashIndex& hashIdx) {
     }
 }
 
-void detectDataExfiltration(AnomalyList& results, const HashIndex& hashIdx) {
-    for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++) {
-        HashNode* node = hashIdx.byUser.buckets[bucket];
-        while (node != nullptr) {
-            for (int i = 0; i < node->count; i++) {
-                LogRecord* currentEvent = node->values[i];
-                if (currentEvent->event_type != EventType::DOWNLOAD) {
+void detectDataExfiltration(AnomalyList &results, const HashIndex &hashIdx)
+{
+    for (int bucket = 0; bucket < hashIdx.byUser.tableSize; bucket++)
+    {
+        HashNode *node = hashIdx.byUser.buckets[bucket];
+        while (node != nullptr)
+        {
+            for (int i = 0; i < node->count; i++)
+            {
+                LogRecord *currentEvent = node->values[i];
+                if (currentEvent->event_type != EventType::DOWNLOAD)
+                {
                     continue;
                 }
 
                 // Tích lũy số lượng sự kiện DOWNLOAD trong vòng 5 phút (300 giây) trở về trước
                 int downloadCount = 0;
-                for (int j = i; j >= 0; j--) {
-                    LogRecord* pastEvent = node->values[j];
-                    if (currentEvent->timestamp - pastEvent->timestamp > 300) {
-                        break;  // Đã vượt ra ngoài phạm vi 5 phút
+                for (int j = i; j >= 0; j--)
+                {
+                    LogRecord *pastEvent = node->values[j];
+                    if (currentEvent->timestamp - pastEvent->timestamp > 300)
+                    {
+                        break; // Đã vượt ra ngoài phạm vi 5 phút
                     }
-                    if (pastEvent->event_type == EventType::DOWNLOAD) {
+                    if (pastEvent->event_type == EventType::DOWNLOAD)
+                    {
                         downloadCount++;
                     }
                 }
 
-                if (downloadCount > 10) {
-                    AnomalyRecord* rec = new AnomalyRecord();
+                if (downloadCount > 10)
+                {
+                    AnomalyRecord *rec = new AnomalyRecord();
                     rec->type = AnomalyType::DATA_EXFILTRATION;
                     rec->userId = node->key;
                     rec->timestamp = currentEvent->timestamp;
@@ -154,43 +189,56 @@ void detectDataExfiltration(AnomalyList& results, const HashIndex& hashIdx) {
     }
 }
 
-void detectLateralMovement(AnomalyList& results, const HashIndex& hashIdx) {
-    for (int bucket = 0; bucket < hashIdx.byDevice.tableSize; bucket++) {
-        HashNode* node = hashIdx.byDevice.buckets[bucket];
-        while (node != nullptr) {
-            for (int i = 0; i < node->count; i++) {
-                LogRecord* currentEvent = node->values[i];
+void detectLateralMovement(AnomalyList &results, const HashIndex &hashIdx)
+{
+    for (int bucket = 0; bucket < hashIdx.byDevice.tableSize; bucket++)
+    {
+        HashNode *node = hashIdx.byDevice.buckets[bucket];
+        while (node != nullptr)
+        {
+            for (int i = 0; i < node->count; i++)
+            {
+                LogRecord *currentEvent = node->values[i];
 
                 // Thiết lập cấu trúc lưu trữ và cửa sổ trượt 24 giờ để đếm số lượng tài khoản duy nhất
                 std::string uniqueUsers[10];
                 int uniqueCount = 0;
 
-                for (int j = i; j >= 0; j--) {
-                    LogRecord* pastEvent = node->values[j];
-                    if (currentEvent->timestamp - pastEvent->timestamp > 86400) {
-                        break;  // Đã vượt quá phạm vi cửa sổ 24 giờ
+                for (int j = i; j >= 0; j--)
+                {
+                    LogRecord *pastEvent = node->values[j];
+                    if (currentEvent->timestamp - pastEvent->timestamp > 86400)
+                    {
+                        break; // Đã vượt quá phạm vi cửa sổ 24 giờ
                     }
 
                     // Kiểm tra tính duy nhất của User trong danh sách tạm thời
                     bool userExists = false;
-                    for (int u = 0; u < uniqueCount; u++) {
-                        if (uniqueUsers[u] == pastEvent->user_id) {
+                    for (int u = 0; u < uniqueCount; u++)
+                    {
+                        if (uniqueUsers[u] == pastEvent->user_id)
+                        {
                             userExists = true;
                             break;
                         }
                     }
 
-                    if (!userExists) {
-                        if (uniqueCount < 10) {
+                    if (!userExists)
+                    {
+                        if (uniqueCount < 10)
+                        {
                             uniqueUsers[uniqueCount++] = pastEvent->user_id;
-                        } else {
-                            uniqueCount++;  // Tiếp tục tăng biến đếm để phản ánh chính xác dữ liệu thực tế
+                        }
+                        else
+                        {
+                            uniqueCount++; // Tiếp tục tăng biến đếm để phản ánh chính xác dữ liệu thực tế
                         }
                     }
                 }
 
-                if (uniqueCount > 2) {
-                    AnomalyRecord* rec = new AnomalyRecord();
+                if (uniqueCount > 2)
+                {
+                    AnomalyRecord *rec = new AnomalyRecord();
                     rec->type = AnomalyType::LATERAL_MOVEMENT;
                     rec->userId = currentEvent->user_id;
                     rec->timestamp = currentEvent->timestamp;
