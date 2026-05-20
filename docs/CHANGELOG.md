@@ -6,7 +6,19 @@
 - Mỗi entry ghi rõ: ngày hoàn thành, phase/mốc, và kết quả cụ thể
 - Sau khi ghi vào đây, đồng thời đánh dấu `[x]` tại `master-plan.md`
 
+## [2026-05-20] — Cải tiến Tài liệu & Visual Assets (README & Banner)
 
+### Đã hoàn thành
+
+- ✅ **Thiết kế Visual Banner (`assets/banner.svg`)**: Tạo file vector banner 900x500px, dark theme sang trọng (#0f172a), dot grid layout, neon glowing highlights và mockup terminal hiển thị CLI logs, processing performance và real-time anomaly detection của Halo.
+- ✅ **Nâng cấp tài liệu `README.md`**: Viết lại hoàn chỉnh tài liệu hướng dẫn bằng tiếng Việt, cấu trúc khoa học với các phần: Banner + Badges, Overview, Key Features dạng bảng chi tiết, Architecture & Data Flow với Mermaid diagram (không dùng style fill), Quick Start mẫu, Module Walkthrough chuyên sâu, Roadmap lộ trình phát triển và Footer của HCMUS & QCodesDS.
+- ✅ **Bổ sung Badges GitHub**: Tích hợp các badges flat-square tự động phản ánh stack C++17, CMake 3.16+, Memory Safe (0 leak), 100% Custom Containers, Platform & MIT License.
+
+### Ghi chú
+
+- Tệp SVG banner được nhúng trực tiếp trong README để nâng cao trải nghiệm thị giác cho dự án trên GitHub.
+
+---
 
 ## [2026-05-19] — Phase 06: Polish + Docs + Submit (Hoàn tất dự án)
 
